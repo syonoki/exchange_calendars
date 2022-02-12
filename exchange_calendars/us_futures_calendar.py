@@ -45,9 +45,11 @@ class QuantopianUSFuturesCalendar(ExchangeCalendar):
 
     name = "us_futures"
     tz = timezone("America/New_York")
-    open_times = ((None, time(18, 1)),)
+    # open_times = ((None, time(18, 1)),)
+    open_times = ((None, time(18)),)
     close_times = ((None, time(18)),)
     open_offset = -1
+    # close_offset = 1
 
     def execution_time_from_open(self, open_dates):
         return open_dates + Timedelta(hours=FUTURES_OPEN_TIME_OFFSET)
