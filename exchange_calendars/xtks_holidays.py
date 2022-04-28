@@ -39,11 +39,21 @@ NewYearsHolidayJan3 = Holiday(
     day=3,
 )
 
-ComingOfAgeDay = Holiday(
-    "Coming of Age Day",
+# https://en.wikipedia.org/wiki/Coming_of_Age_Day
+ComingOfAgeDayThrough1999 = Holiday(
+    "Coming of Age Day (through 1999)",
+    month=1,
+    day=15,
+    start_date="1948-01-01",
+    end_date="2000-01-01",
+    observance=sunday_to_monday,
+)
+ComingOfAgeDay2000Onwards = Holiday(
+    "Coming of Age Day (2000 onwards)",
     month=1,
     day=1,
     offset=DateOffset(weekday=MO(2)),
+    start_date="2000-01-01",
 )
 
 NationalFoundationDay = Holiday(
@@ -58,9 +68,13 @@ NationalFoundationDay = Holiday(
 # year, so we treat them as ad-hoc holidays, even though they
 # occur every year. For more info, see:
 # https://en.wikipedia.org/wiki/Public_holidays_in_Japan#cite_note-3
-# For the list of equinoxes going back to 2000, see:
+# See:
 # https://www.timeanddate.com/holidays/japan/
+# https://www.timeanddate.com/holidays/japan/spring-equinox
 VernalEquinoxes = [
+    Timestamp("1997-03-20"),
+    Timestamp("1998-03-21"),
+    Timestamp("1999-03-22"),
     Timestamp("2000-03-20"),
     Timestamp("2001-03-20"),
     Timestamp("2002-03-21"),
@@ -83,6 +97,7 @@ VernalEquinoxes = [
     Timestamp("2019-03-21"),
     Timestamp("2020-03-20"),
     Timestamp("2021-03-20"),
+    Timestamp("2022-03-21"),
 ]
 
 # The Golden Week holidays (late April - early May) are listed in reverse
@@ -113,7 +128,11 @@ GreeneryDay2007Onwards = Holiday(
 )
 
 CitizensHolidayGoldenWeek = Holiday(
-    "Citizen's Holiday Golden Week", month=5, day=4, end_date="2007-01-01"
+    "Citizen's Holiday Golden Week",
+    month=5,
+    day=4,
+    end_date="2007-01-01",
+    observance=sunday_to_monday,
 )
 
 # In 2007, April 29 was changed from Greenery Day to Showa Day,
@@ -134,24 +153,13 @@ ShowaDay = Holiday(
     observance=sunday_to_monday,
 )
 
-# Clash with ChildrensDay and GreeneryDay
-ConstitutionMemorialDay2007Onwards = Holiday(
+# Clash with ChildrensDay
+ConstitutionMemorialDay = Holiday(
     "Constitution Memorial Day",
     month=5,
     day=3,
-    start_date="2007-01-01",
     observance=sunday_to_wednesday,
 )
-
-# Clash with ChildrensDay
-ConstitutionMemorialDayThrough2006 = Holiday(
-    "Constituion Memorial Day",
-    month=5,
-    day=3,
-    end_date="2007-01-01",
-    observance=sunday_to_tuesday,
-)
-
 
 MarineDayThrough2002 = Holiday(
     "Marine Day (through 2002)",
@@ -227,6 +235,9 @@ MountainDay2022Onwards = Holiday(
 
 # See note on equinoxes above VernalEquinoxes
 AutumnalEquinoxes = [
+    Timestamp("1997-09-23"),
+    Timestamp("1998-09-23"),
+    Timestamp("1999-09-23"),
     Timestamp("2000-09-23"),
     Timestamp("2001-09-24"),
     Timestamp("2002-09-23"),
@@ -249,6 +260,7 @@ AutumnalEquinoxes = [
     Timestamp("2019-09-23"),
     Timestamp("2020-09-22"),
     Timestamp("2021-09-23"),
+    Timestamp("2022-09-23"),
 ]
 
 # If the Autumnal Equinox falls on a Wednesday, the Tuesday before
@@ -276,11 +288,22 @@ RespectForTheAgedDay2003Onwards = Holiday(
     start_date="2003-01-01",
 )
 
-HealthAndSportsDayThrough2019 = Holiday(
-    "Health and Sports Day (through 2019)",
+# https://en.wikipedia.org/wiki/Health_and_Sports_Day
+HealthAndSportsDayThrough1999 = Holiday(
+    "Heakth and Sports Day (through 1999)",
+    month=10,
+    day=10,
+    start_date="1966-01-01",
+    end_date="2000-01-01",
+    observance=sunday_to_monday,
+)
+
+HealthAndSportsDay2000OnwardsThrough2019 = Holiday(
+    "Health and Sports Day (2000 - 2019)",
     month=10,
     day=1,
     offset=DateOffset(weekday=MO(2)),
+    start_date="2000-01-01",
     end_date="2020-01-01",
 )
 
@@ -351,4 +374,9 @@ Misc2019Holidays = [
     Timestamp("2019-05-01"),  # Accession Day
     Timestamp("2019-05-02"),  # Citizen's Holiday
     Timestamp("2019-10-22"),  # Enthronement Ceremony
+]
+
+EquityTradingSystemFailure = [
+    # https://www.jpx.co.jp/english/corporate/news/news-releases/0060/20201019-01.html
+    Timestamp("2020-10-01"),
 ]

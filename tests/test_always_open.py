@@ -1,57 +1,37 @@
-from unittest import TestCase
-
+import pytest
 import pandas as pd
 import pandas.testing as tm
 from pytz import UTC
 
 from exchange_calendars.always_open import AlwaysOpenCalendar
-
 from .test_exchange_calendar import ExchangeCalendarTestBase
 
 
-class AlwaysOpenTestCase(ExchangeCalendarTestBase, TestCase):
+class TestAlwaysOpenCalendar(ExchangeCalendarTestBase):
+    @pytest.fixture(scope="class", params=["left", "right"])
+    def all_calendars_with_answers(self, request, calendars, answers):
+        yield (calendars[request.param], answers[request.param])
 
-    answer_key_filename = "24-7"
-    calendar_class = AlwaysOpenCalendar
-    start_date = (pd.Timestamp("2016", tz=UTC),)
-    end_date = (pd.Timestamp("2016-12-31", tz=UTC),)
-    MAX_SESSION_HOURS = 24
-    GAPS_BETWEEN_SESSIONS = False
-    HAVE_EARLY_CLOSES = False
+    @pytest.fixture(scope="class")
+    def calendar_cls(self):
+        yield AlwaysOpenCalendar
 
-    MINUTE_INDEX_TO_SESSION_LABELS_START = pd.Timestamp("2016-01-01", tz=UTC)
-    MINUTE_INDEX_TO_SESSION_LABELS_END = pd.Timestamp("2016-04-04", tz=UTC)
+    @pytest.fixture
+    def max_session_hours(self):
+        yield 24
 
-    DAYLIGHT_SAVINGS_DATES = ["2016-04-05", "2016-11-01"]
+    # Calendar-specific tests
 
-    def test_open_every_day(self):
-        cal = self.calendar
+    def test_open_every_day(self, default_calendar_with_answers):
+        cal, ans = default_calendar_with_answers
+        dates = pd.date_range(*ans.sessions_range, tz=UTC)
+        tm.assert_index_equal(cal.sessions, dates)
 
-        #    February 2016
-        # Su Mo Tu We Th Fr Sa
-        #     1  2  3  4  5  6
-        #  7  8  9 10 11 12 13
-        # 14 15 16 17 18 19 20
-        # 21 22 23 24 25 26 27
-        # 28 29
-        dates = pd.date_range("2016-02-01", "2016-02-28", tz=UTC)
-        cal_dates = cal.sessions_in_range(dates[0], dates[-1])
-        tm.assert_index_equal(dates, cal_dates)
+    def test_open_every_minute(self, calendars, answers, one_minute):
+        cal, ans = calendars["left"], answers["left"]
+        minutes = pd.date_range(*ans.trading_minutes_range, freq="min", tz=UTC)
+        tm.assert_index_equal(cal.minutes, minutes)
 
-    def test_open_every_minute(self):
-        cal = self.calendar
-        minutes = pd.date_range("2016-02-01", "2016-02-28 23:59:00", freq="min", tz=UTC)
-        cal_minutes = cal.minutes_for_sessions_in_range(
-            pd.Timestamp("2016-02-01", tz=UTC),
-            pd.Timestamp("2016-02-28", tz=UTC),
-        )
-        tm.assert_index_equal(minutes, cal_minutes)
-
-    def test_start_end(self):
-
-        start = pd.Timestamp("2010-1-3", tz=UTC)
-        end = pd.Timestamp("2010-1-10", tz=UTC)
-        calendar = self.calendar_class(start=start, end=end)
-
-        self.assertTrue(calendar.first_trading_session == start)
-        self.assertTrue(calendar.last_trading_session == end)
+        cal = calendars["right"]
+        minutes += one_minute
+        tm.assert_index_equal(cal.minutes, minutes)

@@ -27,6 +27,10 @@ from .tase_holidays import (
     NewYearsEve,
     Passover,
     Passover2,
+    PassoverInterimDay1,
+    PassoverInterimDay2,
+    PassoverInterimDay3,
+    PassoverInterimDay4,
     Passover2Eve,
     PassoverEve,
     Pentecost,
@@ -96,6 +100,8 @@ class XTAEExchangeCalendar(ExchangeCalendar):
 
     close_times = ((None, time(17, 15)),)
 
+    regular_early_close = time(14, 15)
+
     @property
     def regular_holidays(self):
         return HolidayCalendar(
@@ -136,6 +142,22 @@ class XTAEExchangeCalendar(ExchangeCalendar):
             # 2021
             # Election Day
             pd.Timestamp("2021-03-23"),
+        ]
+
+    @property
+    def special_closes(self):
+        return [
+            (
+                self.regular_early_close,
+                HolidayCalendar(
+                    [
+                        PassoverInterimDay1,
+                        PassoverInterimDay2,
+                        PassoverInterimDay3,
+                        PassoverInterimDay4,
+                    ]
+                )
+            )
         ]
 
     @property

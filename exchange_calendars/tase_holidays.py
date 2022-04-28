@@ -222,7 +222,7 @@ class _HolidayOffset(Easter):
         pass
 
     @apply_wraps
-    def apply(self, other):
+    def _apply(self, other):
         current = self.holiday(other.year).to_pydate()
         current = datetime(current.year, current.month, current.day)
         current = localize_pydatetime(current, other.tzinfo)
@@ -247,6 +247,9 @@ class _HolidayOffset(Easter):
             other.microsecond,
         )
         return new
+
+    # backwards compat
+    apply = _apply
 
     def is_on_offset(self, dt):
         if self.normalize and not _is_normalized(dt):
@@ -335,3 +338,34 @@ SimchatTorahEve = Holiday(
     "Simchat Torah Eve", month=1, day=1, offset=[_SimchatTorah(), Day(-1)]
 )
 SimchatTorah = Holiday("Simchat Torah", month=1, day=1, offset=[_SimchatTorah()])
+
+# Passover interim days are the days between beginning and end of passover. Any otherwise regular business day in that
+# period becomes an early close day.
+PassoverInterimDay1 = Holiday(
+    "Passover Interim Day",
+    month=1,
+    day=1,
+    offset=[_Passover(), Day(1)],
+    days_of_week=(0, 1, 2, 3, 6),
+)
+PassoverInterimDay2 = Holiday(
+    "Passover Interim Day",
+    month=1,
+    day=1,
+    offset=[_Passover(), Day(2)],
+    days_of_week=(0, 1, 2, 3, 6),
+)
+PassoverInterimDay3 = Holiday(
+    "Passover Interim Day",
+    month=1,
+    day=1,
+    offset=[_Passover(), Day(3)],
+    days_of_week=(0, 1, 2, 3, 6),
+)
+PassoverInterimDay4 = Holiday(
+    "Passover Interim Day",
+    month=1,
+    day=1,
+    offset=[_Passover(), Day(4)],
+    days_of_week=(0, 1, 2, 3, 6),
+)

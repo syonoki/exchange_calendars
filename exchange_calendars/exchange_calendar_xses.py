@@ -362,6 +362,17 @@ precomputed_ses_holidays = pd.to_datetime(
         "2021-08-09",  # National Day
         "2021-11-04",  # Deepavali
         "2021-12-25",  # Christmas Day. TODO: 2021-12-24 and 2021-12-31 are half days
+        # TODO: Eve of Chinese New Year (2022-01-31) is a half day
+        "2022-02-01",  # Chinese New Year
+        "2022-02-02",  # Chinese New Year
+        "2022-04-15",  # Good Friday
+        "2022-05-02",  # Labour Day (in lieu)
+        "2022-05-03",  # Hari Raya Puasa
+        "2022-05-16",  # Vesak Day (in lieu)
+        "2022-07-11",  # Hari Raya Haji (in lieu)
+        "2022-08-09",  # National Day
+        "2022-10-24",  # Deepavali
+        "2022-12-26",  # Christmas Day (in lieu)
     ]
 )
 

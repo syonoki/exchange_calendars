@@ -29,7 +29,7 @@ def construct_all_calendars():
 
 def is_open_on_minute_bench(cal, timestamps):
     for timestamp in timestamps:
-        cal.is_open_on_minute(timestamp)
+        cal.is_open_on_minute(timestamp, _parse=False)
 
 
 def test_calendar_construction(benchmark):

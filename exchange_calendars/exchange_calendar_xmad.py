@@ -59,16 +59,20 @@ ConstitutionDay = Holiday(
 ImmaculateConception = immaculate_conception(end_date="2005")
 
 ChristmasEveThrough2010 = christmas_eve(end_date="2011")
-ChristmasEveEarlyClose2012Onwards = christmas_eve(
+ChristmasEveFrom2021 = christmas_eve(start_date="2021")
+ChristmasEveEarlyClose2012To2020 = christmas_eve(
     start_date="2012",
+    end_date="2021",
     days_of_week=(WEEKDAYS),
 )
 Christmas = christmas()
 BoxingDay = boxing_day()
 
 NewYearsEveThrough2010 = new_years_eve(end_date="2011")
-NewYearsEveEarlyClose2012Onwards = new_years_eve(
+NewYearsEveFrom2021 = new_years_eve(start_date="2021")
+NewYearsEveEarlyClose2012To2020 = new_years_eve(
     start_date="2012",
+    end_date="2021",
     days_of_week=(WEEKDAYS),
 )
 
@@ -85,6 +89,7 @@ class XMADExchangeCalendar(ExchangeCalendar):
       - Good Friday
       - Easter Monday
       - Labour Day
+      - Christmas Eve (apart from when it was observed as an early close)
       - Christmas Day
       - Boxing Day
 
@@ -95,11 +100,10 @@ class XMADExchangeCalendar(ExchangeCalendar):
       - All Saints Day (until 2004, inclusive)
       - Constitution Day (until 2004, inclusive)
       - Immaculate Conception (until 2004, inclusive)
-      - Christmas Eve (until 2010, inclusive)
       - New Year's Eve (until 2010, inclusive)
 
     Early Closes:
-      - Christmas Eve (2012 and after)
+      - Christmas Eve (2012 to 2020, inclusive)
       - New Year's Eve (2012 and after)
     """
 
@@ -128,9 +132,11 @@ class XMADExchangeCalendar(ExchangeCalendar):
                 ConstitutionDay,
                 ImmaculateConception,
                 ChristmasEveThrough2010,
+                ChristmasEveFrom2021,
                 Christmas,
                 BoxingDay,
                 NewYearsEveThrough2010,
+                NewYearsEveFrom2021
             ]
         )
 
@@ -141,8 +147,8 @@ class XMADExchangeCalendar(ExchangeCalendar):
                 self.regular_early_close,
                 HolidayCalendar(
                     [
-                        ChristmasEveEarlyClose2012Onwards,
-                        NewYearsEveEarlyClose2012Onwards,
+                        ChristmasEveEarlyClose2012To2020,
+                        NewYearsEveEarlyClose2012To2020,
                     ]
                 ),
             )

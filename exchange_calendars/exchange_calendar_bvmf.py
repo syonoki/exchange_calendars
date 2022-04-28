@@ -39,6 +39,8 @@ AniversarioSaoPaulo = Holiday(
     "Aniversario de Sao Paulo",
     month=1,
     day=25,
+    # in 2022, BVMF was opened on this day
+    end_date="2021-01-01",
 )
 # Carnival Monday
 CarnavalSegunda = Holiday(
@@ -47,7 +49,13 @@ CarnavalSegunda = Holiday(
 # Carnival Tuesday
 CarnavalTerca = Holiday("Carnaval Terca", month=1, day=1, offset=[Easter(), Day(-47)])
 # Ash Wednesday (short day)
-QuartaCinzas = Holiday("Quarta Cinzas", month=1, day=1, offset=[Easter(), Day(-46)])
+QuartaCinzas = Holiday(
+    "Quarta Cinzas",
+    month=1,
+    day=1,
+    offset=[Easter(), Day(-46)],
+    start_date="2016-01-01",
+)
 # Good Friday
 SextaPaixao = GoodFriday
 # Feast of the Most Holy Body of Christ
@@ -138,6 +146,7 @@ class BVMFExchangeCalendar(ExchangeCalendar):
     - Sao Paulo City Anniversary (Jan 25)
     - Carnaval Monday (48 days before Easter)
     - Carnaval Tuesday (47 days before Easter)
+    - Ash Wednesday (short day / half day trading) (46 days before Easter)
     - Passion of the Christ (Good Friday, 2 days before Easter)
     - Corpus Christi (60 days after Easter)
     - Tiradentes (April 21)
@@ -158,6 +167,8 @@ class BVMFExchangeCalendar(ExchangeCalendar):
     name = "BVMF"
 
     tz = timezone("America/Sao_Paulo")
+
+    regular_late_open = time(13)
 
     open_times = ((None, time(10)),)
 
@@ -195,3 +206,12 @@ class BVMFExchangeCalendar(ExchangeCalendar):
                 AnoNovo,
             ]
         )
+
+    @property
+    def special_opens(self):
+        return [
+            (
+                self.regular_late_open,
+                HolidayCalendar([QuartaCinzas]),
+            ),
+        ]

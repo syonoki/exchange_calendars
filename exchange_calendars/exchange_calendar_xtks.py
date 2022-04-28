@@ -4,24 +4,26 @@ from itertools import chain
 import pandas as pd
 from pytz import UTC, timezone
 
-from .exchange_calendar import HolidayCalendar, ExchangeCalendar, end_default
+from .exchange_calendar import HolidayCalendar, ExchangeCalendar
 from .xtks_holidays import (
     AutumnalEquinoxes,
     ChildrensDay,
     CitizensHolidayGoldenWeek,
     CitizensHolidaySilverWeek,
-    ComingOfAgeDay,
-    ConstitutionMemorialDay2007Onwards,
-    ConstitutionMemorialDayThrough2006,
+    ComingOfAgeDay2000Onwards,
+    ComingOfAgeDayThrough1999,
+    ConstitutionMemorialDay,
     CultureDay,
     EmperorAkihitoBirthday,
     EmperorNaruhitoBirthday,
+    EquityTradingSystemFailure,
     GreeneryDay2007Onwards,
     GreeneryDayThrough2006,
+    HealthAndSportsDay2000OnwardsThrough2019,
     HealthAndSportsDay2020,
     HealthAndSportsDay2021,
     HealthAndSportsDay2022Onwards,
-    HealthAndSportsDayThrough2019,
+    HealthAndSportsDayThrough1999,
     LaborThanksgivingDay,
     MarineDay2003OnwardsThrough2019,
     MarineDay2020,
@@ -43,8 +45,6 @@ from .xtks_holidays import (
     ShowaDay,
     VernalEquinoxes,
 )
-
-XTKS_START_DEFAULT = pd.Timestamp("2000-01-01", tz=UTC)
 
 
 class XTKSExchangeCalendar(ExchangeCalendar):
@@ -76,12 +76,10 @@ class XTKSExchangeCalendar(ExchangeCalendar):
     - Culture Day (November 3)
     - Labor Thanksgiving Day (Nov. 23)
     - Emperor's Birthday (Dec. 23)
-    """
 
-    def __init__(self, start=XTKS_START_DEFAULT, end=end_default):
-        # because we are not tracking holiday info farther back than 2000,
-        # make the default start date 01-01-2000
-        super(XTKSExchangeCalendar, self).__init__(start=start, end=end)
+    Additional Irregularities:
+    - Closed on October 1, 2020 due to equity trading system failure
+    """
 
     name = "XTKS"
 
@@ -92,6 +90,11 @@ class XTKSExchangeCalendar(ExchangeCalendar):
     close_times = ((None, time(15)),)
 
     @property
+    def bound_start(self) -> pd.Timestamp:
+        # not tracking holiday info farther back than 1997
+        return pd.Timestamp("1997-01-01", tz=UTC)
+
+    @property
     def regular_holidays(self):
         return HolidayCalendar(
             [
@@ -99,12 +102,12 @@ class XTKSExchangeCalendar(ExchangeCalendar):
                 NewYearsHolidayJan1,
                 NewYearsHolidayJan2,
                 NewYearsHolidayJan3,
-                ComingOfAgeDay,
+                ComingOfAgeDayThrough1999,
+                ComingOfAgeDay2000Onwards,
                 NationalFoundationDay,
                 GreeneryDayThrough2006,
                 ShowaDay,
-                ConstitutionMemorialDayThrough2006,
-                ConstitutionMemorialDay2007Onwards,
+                ConstitutionMemorialDay,
                 GreeneryDay2007Onwards,
                 CitizensHolidayGoldenWeek,
                 ChildrensDay,
@@ -119,7 +122,8 @@ class XTKSExchangeCalendar(ExchangeCalendar):
                 MountainDay2022Onwards,
                 RespectForTheAgedDayThrough2002,
                 RespectForTheAgedDay2003Onwards,
-                HealthAndSportsDayThrough2019,
+                HealthAndSportsDayThrough1999,
+                HealthAndSportsDay2000OnwardsThrough2019,
                 HealthAndSportsDay2020,
                 HealthAndSportsDay2021,
                 HealthAndSportsDay2022Onwards,
@@ -138,5 +142,6 @@ class XTKSExchangeCalendar(ExchangeCalendar):
                 AutumnalEquinoxes,
                 CitizensHolidaySilverWeek,
                 Misc2019Holidays,
+                EquityTradingSystemFailure,
             )
         )
