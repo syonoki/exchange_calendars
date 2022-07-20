@@ -28,11 +28,11 @@ def get_biz_dates(calendar, start_date=None, end_date=None, with_tz=False):
 # @lru_cache()
 @preprocess(tz=coerce_string(pytz.timezone))
 @expect_types(tz=optional(tzinfo))
-def previous_biz_date(cal, dt, tz=None):
+def previous_biz_date(cal, dt, n=1, tz=None):
     biz_dates = get_biz_dates(cal)
 
     if dt in biz_dates:
-        return biz_dates[biz_dates.get_loc(dt) - 1]
+        return biz_dates[biz_dates.get_loc(dt) - n]
 
     return find_closest_date_before(dt, biz_dates, tz=tz)
 
@@ -79,12 +79,12 @@ def find_closest_date_after(start_date, biz_dates, tz=None):
 
 @preprocess(tz=coerce_string(pytz.timezone))
 @expect_types(tz=optional(tzinfo))
-def find_closest_date_before(end_date, biz_dates, tz=None):
+def find_closest_date_before(end_date, biz_dates, n=1, tz=None):
     if end_date in biz_dates:
         target_date = to_timestamp(end_date)
     else:
         before_dates = biz_dates[biz_dates < end_date]
-        target_date = before_dates[-1]
+        target_date = before_dates[-n]
     return _apply_tz(target_date, tz=tz) if tz is not None else target_date
 
 
