@@ -29,7 +29,7 @@ def get_biz_dates(calendar, start_date=None, end_date=None, with_tz=False):
 @preprocess(tz=coerce_string(pytz.timezone))
 @expect_types(tz=optional(tzinfo))
 def previous_biz_date(cal, dt, n=1, tz=None):
-    biz_dates = get_biz_dates(cal)
+    biz_dates = get_biz_dates(cal, with_tz=tz is not None)
 
     if dt in biz_dates:
         return biz_dates[biz_dates.get_loc(dt) - n]
