@@ -328,7 +328,7 @@ class ExchangeCalendar(ABC):
         self.break_starts_nanos = self.schedule.break_start.values.astype(np.int64)
         self.break_ends_nanos = self.schedule.break_end.values.astype(np.int64)
         self.closes_nanos = self.schedule.market_close.values.astype(np.int64)
-        self.market_opens_nanos = self.schedule.market_open.values.astype(np.int64)
+        # self.market_opens_nanos = self.schedule.market_open.values.astype(np.int64)
         self.minute_bar_starts_nanos = self.schedule.minute_bar_start.values.astype(np.int64)
         _check_breaks_match(self.break_starts_nanos, self.break_ends_nanos)
 

@@ -6,7 +6,7 @@ import pandas as pd
 from exchange_calendars.extensions.calendar_func import coerce_string_to_quarter_period
 from pytz import timezone
 from exchange_calendars import ExchangeCalendar
-from exchange_calendars.exchange_calendar import end_default
+
 from commonutils.input_validation import coerce_string
 from commonutils.preprocess import preprocess
 
@@ -141,8 +141,7 @@ start_default = pd.Timestamp('1970-01-01', tz='UTC')
 
 class GenericExchangeCalendar(ExtendedExchangeCalendar):
 
-    def __init__(self, name, tz=None, open_times=None, close_times=None, holidays=None, start=start_default,
-                 end=end_default):
+    def __init__(self, name, tz=None, open_times=None, close_times=None, holidays=None, start=start_default, end=None):
         self._name = name
 
         if not tz:
