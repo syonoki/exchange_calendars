@@ -342,7 +342,7 @@ KRHarvestMoonDay = [
     Timestamp('2021-09-22', tz='UTC'),
     # 2022
     Timestamp('2022-09-09', tz='UTC'),
-    Timestamp('2022-09-12', tz='UTC'), # 대체휴일
+    Timestamp('2022-09-12', tz='UTC'),  # 대체휴일
 ]
 
 # 대체휴일
@@ -628,6 +628,7 @@ class KRXExchangeCalendar(ExtendedExchangeCalendar):
             HolidaysNeedToCheck,
             KRTemporaryHolidayForLiberationDay2020,
             KRTemporaryHoliday2021,
+            KRTemporaryHoliday2022,
             HolidaysBefore1999,
         ))
 

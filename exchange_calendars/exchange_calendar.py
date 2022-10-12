@@ -91,12 +91,12 @@ class deprecate:
     """Decorator for deprecated/renamed ExchangeCalendar methods."""
 
     def __init__(
-        self,
-        deprecated_release: str = "3.4",
-        removal_release: str = "4.0",
-        alt: str = "",
-        renamed: bool = True,
-        prop: bool = False,
+            self,
+            deprecated_release: str = "3.4",
+            removal_release: str = "4.0",
+            alt: str = "",
+            renamed: bool = True,
+            prop: bool = False,
     ):
         self.deprecated_release = "release " + deprecated_release
         self.removal_release = "release " + removal_release
@@ -217,10 +217,10 @@ class ExchangeCalendar(ABC):
     _RIGHT_SIDES = ["right", "both"]
 
     def __init__(
-        self,
-        start: Date | None = None,
-        end: Date | None = None,
-        side: str | None = None,
+            self,
+            start: Date | None = None,
+            end: Date | None = None,
+            side: str | None = None,
     ):
         side = side if side is not None else self.default_side()
         if side not in self.valid_sides():
@@ -692,14 +692,16 @@ class ExchangeCalendar(ABC):
         """All calendar sessions."""
         return self.schedule.index
 
-    @functools.lru_cache(maxsize=1)
-    def _sessions_nanos(self) -> np.ndarray:
-        return self.sessions.values.astype("int64")
-
-    @property
-    def sessions_nanos(self) -> np.ndarray:
-        """All calendar sessions as nano seconds."""
-        return self._sessions_nanos()
+    try:
+        @functools.cached_property
+        def sessions_nanos(self) -> np.ndarray:
+            """All calendar sessions as nano seconds."""
+            return self.sessions.values.astype("int64")
+    except:
+        @functools.lru_cache()
+        def sessions_nanos(self) -> np.ndarray:
+            """All calendar sessions as nano seconds."""
+            return self.sessions.values.astype("int64")
 
     @property
     def opens(self) -> pd.Series:
@@ -1725,7 +1727,7 @@ class ExchangeCalendar(ABC):
         return self.schedule.at[session_label, "market_open"].tz_localize(UTC)
 
     def session_close(
-        self, session_label: Session, _parse: bool = True
+            self, session_label: Session, _parse: bool = True
     ) -> pd.Timestamp:
         """Return close time for a given session."""
         if _parse:
@@ -1733,7 +1735,7 @@ class ExchangeCalendar(ABC):
         return self.schedule.at[session_label, "market_close"].tz_localize(UTC)
 
     def session_break_start(
-        self, session_label: Session, _parse: bool = True
+            self, session_label: Session, _parse: bool = True
     ) -> pd.Timestamp | pd.NaT:
         """Return break-start time for a given session.
 
@@ -1747,7 +1749,7 @@ class ExchangeCalendar(ABC):
         return break_start
 
     def session_break_end(
-        self, session_label: Session, _parse: bool = True
+            self, session_label: Session, _parse: bool = True
     ) -> pd.Timestamp | pd.NaT:
         """Return break-end time for a given session.
 
@@ -1761,7 +1763,7 @@ class ExchangeCalendar(ABC):
         return break_end
 
     def session_open_close(
-        self, session: Session, _parse: bool = True
+            self, session: Session, _parse: bool = True
     ) -> tuple[pd.Timestamp, pd.Timestamp]:
         """Return open and close times for a given session.
 
@@ -1781,7 +1783,7 @@ class ExchangeCalendar(ABC):
         return self.session_open(session), self.session_close(session)
 
     def session_break_start_end(
-        self, session: Session, _parse: bool = True
+            self, session: Session, _parse: bool = True
     ) -> tuple[pd.Timestamp | pd.NaT, pd.Timestamp | pd.NaT]:
         """Return break-start and break-end times for a given session.
 
@@ -1801,43 +1803,43 @@ class ExchangeCalendar(ABC):
         return self.session_break_start(session), self.session_break_end(session)
 
     def _get_session_minute_from_nanos(
-        self, session: Session, nanos: np.ndarray, _parse: bool
+            self, session: Session, nanos: np.ndarray, _parse: bool
     ) -> pd.Timestamp:
         idx = self._get_session_idx(session, _parse=_parse)
         return pd.Timestamp(nanos[idx], tz=UTC)
 
     def session_first_minute(
-        self, session: Session, _parse: bool = True
+            self, session: Session, _parse: bool = True
     ) -> pd.Timestamp:
         """Return first trading minute of a given session."""
         nanos = self.first_minutes_nanos
         return self._get_session_minute_from_nanos(session, nanos, _parse)
 
     def session_last_minute(
-        self, session: Session, _parse: bool = True
+            self, session: Session, _parse: bool = True
     ) -> pd.Timestamp:
         """Return last trading minute of a given session."""
         nanos = self.last_minutes_nanos
         return self._get_session_minute_from_nanos(session, nanos, _parse)
 
     def session_last_am_minute(
-        self, session: Session, _parse: bool = True
+            self, session: Session, _parse: bool = True
     ) -> pd.Timestamp | pd.NaT:  # Literal[pd.NaT] - when move to min 3.8
         """Return last trading minute of am subsession of a given session."""
         nanos = self.last_am_minutes_nanos
         return self._get_session_minute_from_nanos(session, nanos, _parse)
 
     def session_first_pm_minute(
-        self, session: Session, _parse: bool = True
+            self, session: Session, _parse: bool = True
     ) -> pd.Timestamp | pd.NaT:  # Literal[pd.NaT] - when move to min 3.8
         """Return first trading minute of pm subsession of a given session."""
         nanos = self.first_pm_minutes_nanos
         return self._get_session_minute_from_nanos(session, nanos, _parse)
 
     def session_first_last_minute(
-        self,
-        session: Session,
-        _parse: bool = True,
+            self,
+            session: Session,
+            _parse: bool = True,
     ) -> tuple(pd.Timestamp, pd.Timestamp):
         """Return first and last trading minutes of a given session."""
         idx = self._get_session_idx(session, _parse=_parse)
@@ -1917,7 +1919,7 @@ class ExchangeCalendar(ABC):
         return self.schedule.index[idx - 1]
 
     def session_minutes(
-        self, session: Session, _parse: bool = True
+            self, session: Session, _parse: bool = True
     ) -> pd.DatetimeIndex:
         """Return trading minutes corresponding to a given session.
 
@@ -1935,7 +1937,7 @@ class ExchangeCalendar(ABC):
         return self.minutes_in_range(start_minute=first, end_minute=last)
 
     def session_offset(
-        self, session: Session, count: int, _parse: bool = True
+            self, session: Session, count: int, _parse: bool = True
     ) -> pd.Timestamp:
         """Offset a given session by a number of sessions.
 
@@ -1984,7 +1986,7 @@ class ExchangeCalendar(ABC):
     def _date_oob(self, date: Date) -> bool:
         """Is `date` out-of-bounds."""
         return (
-            date.value < self.sessions_nanos[0] or date.value > self.sessions_nanos[-1]
+                date.value < self.sessions_nanos[0] or date.value > self.sessions_nanos[-1]
         )
 
     def is_session(self, dt: Date, _parse: bool = True) -> bool:
@@ -2006,10 +2008,10 @@ class ExchangeCalendar(ABC):
         return bool(self.sessions_nanos[idx] == dt.value)  # convert from np.bool_
 
     def date_to_session(
-        self,
-        date: Date,
-        direction: str = "none",  # when min 3.8, Literal["none", "previous", "next"]
-        _parse: bool = True,
+            self,
+            date: Date,
+            direction: str = "none",  # when min 3.8, Literal["none", "previous", "next"]
+            _parse: bool = True,
     ) -> pd.Timestamp:
         """Return a session corresponding to a given date.
 
@@ -2068,8 +2070,8 @@ class ExchangeCalendar(ABC):
     def _minute_oob(self, minute: Minute) -> bool:
         """Is `minute` out-of-bounds."""
         return (
-            minute.value < self.minutes_nanos[0]
-            or minute.value > self.minutes_nanos[-1]
+                minute.value < self.minutes_nanos[0]
+                or minute.value > self.minutes_nanos[-1]
         )
 
     def is_trading_minute(self, minute: Minute, _parse: bool = True) -> bool:
@@ -2127,7 +2129,7 @@ class ExchangeCalendar(ABC):
         return bool(numpy_bool)
 
     def is_open_on_minute(
-        self, dt: Minute, ignore_breaks: bool = False, _parse: bool = True
+            self, dt: Minute, ignore_breaks: bool = False, _parse: bool = True
     ) -> bool:
         """Query if exchange is open on a given minute.
 
@@ -2343,10 +2345,10 @@ class ExchangeCalendar(ABC):
 
     # NOTE: when min to 3.8, direction annotation to Literal["next", "previous", "none"]
     def minute_to_session(
-        self,
-        minute: Minute,
-        direction: str = "next",
-        _parse: bool = True,
+            self,
+            minute: Minute,
+            direction: str = "next",
+            _parse: bool = True,
     ) -> pd.Timestamp:
         """Get session corresponding with a trading or break minute.
 
@@ -2429,9 +2431,8 @@ class ExchangeCalendar(ABC):
 
         return current_or_next_session
 
-
     def minute_to_past_session(
-        self, minute: Minute, count: int = 1, _parse: bool = True
+            self, minute: Minute, count: int = 1, _parse: bool = True
     ) -> pd.Timestamp:
         """Get a session that closed before a given minute.
 
@@ -2473,10 +2474,10 @@ class ExchangeCalendar(ABC):
         return self.session_offset(base_session, -count, _parse=False)
 
     def minute_to_future_session(
-        self,
-        minute: Minute,
-        count: int = 1,
-        _parse: bool = True,
+            self,
+            minute: Minute,
+            count: int = 1,
+            _parse: bool = True,
     ) -> pd.Timestamp:
         """Get a session that opens after a given minute.
 
@@ -2520,7 +2521,7 @@ class ExchangeCalendar(ABC):
 
     # NOTE: when min to 3.8, direction annotation to Literal["next", "previous", "none"]
     def minute_to_trading_minute(
-        self, minute: Minute, direction: str = "none", _parse: bool = True
+            self, minute: Minute, direction: str = "none", _parse: bool = True
     ) -> pd.Timestamp:
         """Resolve a minute to a trading minute.
 
@@ -2572,7 +2573,7 @@ class ExchangeCalendar(ABC):
             )
 
     def minute_offset(
-        self, minute: TradingMinute, count: int, _parse: bool = True
+            self, minute: TradingMinute, count: int, _parse: bool = True
     ) -> pd.Timestamp:
         """Offset a given trading minute by a number of trading minutes.
 
@@ -2606,10 +2607,10 @@ class ExchangeCalendar(ABC):
         return self.minutes[idx]
 
     def minute_offset_by_sessions(
-        self,
-        minute: TradingMinute,
-        count: int = 1,
-        _parse: bool = True,
+            self,
+            minute: TradingMinute,
+            count: int = 1,
+            _parse: bool = True,
     ) -> pd.Timestamp:
         """Offset trading minute by a given number of sessions.
 
@@ -2689,7 +2690,7 @@ class ExchangeCalendar(ABC):
         return slice(slice_start, slice_end)
 
     def minutes_in_range(
-        self, start_minute: Minute, end_minute: Minute, _parse: bool = True
+            self, start_minute: Minute, end_minute: Minute, _parse: bool = True
     ) -> pd.DatetimeIndex:
         """Return all trading minutes between given minutes.
 
@@ -2707,7 +2708,7 @@ class ExchangeCalendar(ABC):
         return self.minutes[slc]
 
     def minutes_window(
-        self, start_dt: TradingMinute, count: int, _parse: bool = True
+            self, start_dt: TradingMinute, count: int, _parse: bool = True
     ) -> pd.DatetimeIndex:
         """Return block of given size of consecutive trading minutes.
 
@@ -2745,7 +2746,7 @@ class ExchangeCalendar(ABC):
                 f" {count - (end_idx - len(self.minutes_nanos) + 1)} for"
                 f" `start` '{start_dt}'."
             )
-        return self.minutes[min(start_idx, end_idx) : max(start_idx, end_idx) + 1]
+        return self.minutes[min(start_idx, end_idx): max(start_idx, end_idx) + 1]
 
     def minutes_distance(self, start: Minute, end: Minute, _parse: bool = True) -> int:
         """Return the number of minutes in a range.
@@ -2804,7 +2805,7 @@ class ExchangeCalendar(ABC):
         first_min_nanos = self.first_minutes_nanos
         last_min_nanos = self.last_minutes_nanos
         prev_first_mins_idxs = (
-            first_min_nanos.searchsorted(index_nanos, side="right") - 1
+                first_min_nanos.searchsorted(index_nanos, side="right") - 1
         )
         next_last_mins_idxs = last_min_nanos.searchsorted(index_nanos, side="left")
 
@@ -2833,7 +2834,7 @@ class ExchangeCalendar(ABC):
     # Methods that evaluate or interrogate a range of sessions.
 
     def _parse_start_end_dates(
-        self, start: Date, end: Date, _parse: bool
+            self, start: Date, end: Date, _parse: bool
     ) -> tuple[pd.Timestamp, pd.Timestamp]:
         if not _parse:
             return start, end
@@ -2847,7 +2848,7 @@ class ExchangeCalendar(ABC):
         return slice(slice_start, slice_end)
 
     def sessions_in_range(
-        self, start_session_label: Date, end_session_label: Date, _parse: bool = True
+            self, start_session_label: Date, end_session_label: Date, _parse: bool = True
     ) -> pd.DatetimeIndex:
         """Return sessions within a given range.
 
@@ -2887,7 +2888,7 @@ class ExchangeCalendar(ABC):
         return self.break_starts[slc].notna().any()
 
     def sessions_window(
-        self, session_label: Session, count: int, _parse: bool = True
+            self, session_label: Session, count: int, _parse: bool = True
     ) -> pd.DatetimeIndex:
         """Return block of given size of consecutive sessions.
 
@@ -2921,7 +2922,7 @@ class ExchangeCalendar(ABC):
                 f" {count - (end_idx - len(self.sessions) + 1)} for"
                 f" `session` '{session_label}'."
             )
-        return self.sessions[min(start_idx, end_idx) : max(start_idx, end_idx) + 1]
+        return self.sessions[min(start_idx, end_idx): max(start_idx, end_idx) + 1]
 
     def sessions_distance(self, start: Date, end: Date, _parse: bool = True) -> int:
         """Return the number of sessions in a range.
@@ -2948,7 +2949,7 @@ class ExchangeCalendar(ABC):
         return slc.start - slc.stop if negate else slc.stop - slc.start
 
     def sessions_minutes(
-        self, start: Date, end: Date, _parse: bool = True
+            self, start: Date, end: Date, _parse: bool = True
     ) -> pd.DatetimeIndex:
         """Return trading minutes over a sessions range.
 
@@ -3017,7 +3018,7 @@ class ExchangeCalendar(ABC):
         return self.schedule.loc[start:end, "market_close"].dt.tz_localize(UTC)
 
     def sessions_minutes_count(
-        self, start: Date, end: Date, _parse: bool = True
+            self, start: Date, end: Date, _parse: bool = True
     ) -> int:
         """Return number of trading minutes in a range of sessions.
 
@@ -3043,18 +3044,18 @@ class ExchangeCalendar(ABC):
         return (nanos // NANOSECONDS_PER_MINUTE).sum()
 
     def trading_index(
-        self,
-        start: Date,
-        end: Date,
-        period: pd.Timedelta | str,
-        intervals: bool = True,
-        closed: str = "left",  # when move to min 3.8 Literal["left", "right", "both", "neither"]
-        force_close: bool = False,
-        force_break_close: bool = False,
-        force: bool | None = None,
-        curtail_overlaps: bool = False,
-        ignore_breaks: bool = False,
-        parse: bool = True,
+            self,
+            start: Date,
+            end: Date,
+            period: pd.Timedelta | str,
+            intervals: bool = True,
+            closed: str = "left",  # when move to min 3.8 Literal["left", "right", "both", "neither"]
+            force_close: bool = False,
+            force_break_close: bool = False,
+            force: bool | None = None,
+            curtail_overlaps: bool = False,
+            ignore_breaks: bool = False,
+            parse: bool = True,
     ) -> pd.DatetimeIndex | pd.IntervalIndex:
         """Create a trading index.
 
@@ -3508,7 +3509,7 @@ class ExchangeCalendar(ABC):
 
     @deprecate(alt="minutes_for_session", renamed=False)
     def execution_minutes_for_session(
-        self, session_label: Session, _parse=False
+            self, session_label: Session, _parse=False
     ) -> pd.DatetimeIndex:
         """
         Given a session label, return the execution minutes for that session.
@@ -3537,45 +3538,45 @@ class ExchangeCalendar(ABC):
 
     @deprecate(alt="date_to_session")
     def date_to_session_label(
-        self,
-        date: Date,
-        direction: str = "none",
-        _parse: bool = True,
+            self,
+            date: Date,
+            direction: str = "none",
+            _parse: bool = True,
     ) -> pd.Timestamp:
         """Method renamed. Use `date_to_session`."""
         return self.date_to_session(date, direction, _parse)
 
     @deprecate(alt="session_open_close")
     def open_and_close_for_session(
-        self, session_label: Session, _parse: bool = True
+            self, session_label: Session, _parse: bool = True
     ) -> tuple[pd.Timestamp, pd.Timestamp]:
         """Method renamed. Use `session_open_close`."""
         return self.session_open_close(session_label, _parse)
 
     @deprecate(alt="session_break_start_end")
     def break_start_and_end_for_session(
-        self, session_label: Session, _parse: bool = True
+            self, session_label: Session, _parse: bool = True
     ) -> tuple[pd.Timestamp | pd.NaT, pd.Timestamp | pd.NaT]:
         """Method renamed. Use `session_break_start_end."""
         return self.session_break_start_end(session_label, _parse)
 
     @deprecate(alt="next_session")
     def next_session_label(
-        self, session_label: Session, _parse: bool = True
+            self, session_label: Session, _parse: bool = True
     ) -> pd.Timestamp:
         """Method renamed. Use `next_session`."""
         return self.next_session(session_label, _parse)
 
     @deprecate(alt="previous_session")
     def previous_session_label(
-        self, session_label: Session, _parse: bool = True
+            self, session_label: Session, _parse: bool = True
     ) -> pd.Timestamp:
         """Method renamed. Use `previous_session`."""
         return self.previous_session(session_label, _parse)
 
     @deprecate(alt="session_minutes")
     def minutes_for_session(
-        self, session_label: Session, _parse: bool = True
+            self, session_label: Session, _parse: bool = True
     ) -> pd.DatetimeIndex:
         """Method renamed. Use `session_minutes`."""
         return self.session_minutes(session_label, _parse)
@@ -3624,7 +3625,7 @@ class ExchangeCalendar(ABC):
 
     @deprecate(alt="sessions_has_break")
     def has_breaks(
-        self, start: Date | None = None, end: Date | None = None, _parse: bool = True
+            self, start: Date | None = None, end: Date | None = None, _parse: bool = True
     ) -> bool:
         """Method renamed. Use `sessions_has_break`."""
         return self.sessions_has_break(start, end, _parse)
@@ -3655,58 +3656,58 @@ class ExchangeCalendar(ABC):
 
     @deprecate(alt="minute_to_session")
     def minute_to_session_label(
-        self,
-        dt: Minute,
-        direction: str = "next",
-        _parse: bool = True,
+            self,
+            dt: Minute,
+            direction: str = "next",
+            _parse: bool = True,
     ) -> pd.Timestamp:
         """Method renamed. Use `minute_to_session`."""
         return self.minute_to_session(dt, direction, _parse)
 
     @deprecate(alt="minutes_to_sessions")
     def minute_index_to_session_labels(
-        self, index: pd.DatetimeIndex
+            self, index: pd.DatetimeIndex
     ) -> pd.DatetimeIndex:
         """Method renamed. Use `minutes_to_sessions`."""
         return self.minutes_to_sessions(index)
 
     @deprecate(alt="sessions_distance")
     def session_distance(
-        self,
-        start_session_label: Date,
-        end_session_label: Date,
-        _parse: bool = True,
+            self,
+            start_session_label: Date,
+            end_session_label: Date,
+            _parse: bool = True,
     ) -> int:
         """Method renamed. Use `sessions_distance`."""
         return self.sessions_distance(start_session_label, end_session_label, _parse)
 
     @deprecate(alt="sessions_minutes")
     def minutes_for_sessions_in_range(
-        self,
-        start_session_label: Date,
-        end_session_label: Date,
-        _parse: bool = True,
+            self,
+            start_session_label: Date,
+            end_session_label: Date,
+            _parse: bool = True,
     ) -> pd.DatetimeIndex:
         """Method renamed. Use `sessions_minutes`."""
         return self.sessions_minutes(start_session_label, end_session_label, _parse)
 
     @deprecate(alt="sessions_opens")
     def session_opens_in_range(
-        self, start_session_label: Date, end_session_label: Date, _parse: bool = True
+            self, start_session_label: Date, end_session_label: Date, _parse: bool = True
     ) -> pd.Series:
         """Method renamed. Use `sessions_opens`."""
         return self.sessions_opens(start_session_label, end_session_label, _parse)
 
     @deprecate(alt="sessions_closes")
     def session_closes_in_range(
-        self, start_session_label: Date, end_session_label: Date, _parse: bool = True
+            self, start_session_label: Date, end_session_label: Date, _parse: bool = True
     ) -> pd.Series:
         """Method renamed. Use `sessions_closes`."""
         return self.sessions_closes(start_session_label, end_session_label, _parse)
 
     @deprecate(alt="sessions_minutes_count")
     def minutes_count_for_sessions_in_range(
-        self, start_session: Date, end_session: Date, _parse=False
+            self, start_session: Date, end_session: Date, _parse=False
     ) -> int:
         """Method renamed. Use `sessions_minutes_count`."""
         return self.sessions_minutes_count(start_session, end_session, _parse)
