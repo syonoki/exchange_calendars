@@ -209,6 +209,10 @@ KRLunarNewYear = [
     Timestamp('2022-01-31', tz='UTC'),
     Timestamp('2022-02-01', tz='UTC'),
     Timestamp('2022-02-02', tz='UTC'),
+
+    # 2023
+    Timestamp('2023-01-23', tz='UTC'),
+    Timestamp('2023-01-24', tz='UTC'),
 ]
 
 # Election Days
