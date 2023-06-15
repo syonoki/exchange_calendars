@@ -53,15 +53,22 @@ class ExtendedExchangeCalendar(ExchangeCalendar, ABC):
             days_offset = n
 
         month_ends = self._periods('month', days_offset)
-        idx_start = month_ends.index.get_locs([start.year, start.month])[0]
-        idx_end = month_ends.index.get_locs([end.year, end.month])[0]
-        return pd.DatetimeIndex(month_ends[idx_start: idx_end + 1])
 
-    @preprocess(start=coerce_string(pd.Period), end=coerce_string(pd.Period))
+        if int(pd.__version__[0]) == 2:
+            month_ends = month_ends.reset_index(drop=True)
+            idx_start = month_ends[(month_ends.dt.year==start.year) & (month_ends.dt.month==start.month)].index[0]
+            idx_end = month_ends[(month_ends.dt.year==end.year) & (month_ends.dt.month==end.month)].index[0]
+            return pd.DatetimeIndex(month_ends[idx_start: idx_end + 1])
+        else:
+            idx_start = month_ends.index.get_locs([start.year, start.month])[0]
+            idx_end = month_ends.index.get_locs([end.year, end.month])[0]
+            return pd.DatetimeIndex(month_ends[idx_start: idx_end + 1])
+
+    # @preprocess(start=coerce_string(pd.Period), end=coerce_string(pd.Period))
     def month_ends_in_range(self, start, end, days_offset=0):
         return self._months_in_range(start, end, days_offset, invert=True)
 
-    @preprocess(start=coerce_string(pd.Period), end=coerce_string(pd.Period))
+    # @preprocess(start=coerce_string(pd.Period), end=coerce_string(pd.Period))
     def month_starts_in_range(self, start, end, days_offset=0):
         return self._months_in_range(start, end, days_offset, invert=False)
 
@@ -92,11 +99,11 @@ class ExtendedExchangeCalendar(ExchangeCalendar, ABC):
         idx_end = week_ends.index.searchsorted(self.to_timestamp(end, tz=tz))
         return pd.DatetimeIndex(week_ends[idx_start: idx_end + 1])
 
-    @preprocess(start=coerce_string(pd.Period), end=coerce_string(pd.Period))
+    # @preprocess(start=coerce_string(pd.Period), end=coerce_string(pd.Period))
     def week_ends_in_range(self, start, end, days_offset=0):
         return self._weeks_in_range(start, end, days_offset, invert=True)
 
-    @preprocess(start=coerce_string(pd.Period), end=coerce_string(pd.Period))
+    # @preprocess(start=coerce_string(pd.Period), end=coerce_string(pd.Period))
     def week_starts_in_range(self, start, end, days_offset=0):
         return self._weeks_in_range(start, end, days_offset, invert=False)
 
@@ -114,11 +121,11 @@ class ExtendedExchangeCalendar(ExchangeCalendar, ABC):
         idx_end = quarter_ends.index.searchsorted(self.to_timestamp(end, tz=tz))
         return pd.DatetimeIndex(quarter_ends[idx_start: idx_end + 1])
 
-    @preprocess(start=coerce_string_to_quarter_period(), end=coerce_string_to_quarter_period())
+    # @preprocess(start=coerce_string_to_quarter_period(), end=coerce_string_to_quarter_period())
     def quarter_ends_in_range(self, start, end, days_offset=0):
         return self._quarters_in_range(start, end, days_offset, invert=True)
 
-    @preprocess(start=coerce_string_to_quarter_period(), end=coerce_string_to_quarter_period())
+    # @preprocess(start=coerce_string_to_quarter_period(), end=coerce_string_to_quarter_period())
     def quarter_starts_in_range(self, start, end, days_offset=0):
         return self._quarters_in_range(start, end, days_offset, invert=False)
 

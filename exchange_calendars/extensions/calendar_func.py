@@ -1,3 +1,4 @@
+import datetime
 from datetime import tzinfo
 from functools import lru_cache, partial
 
@@ -12,8 +13,6 @@ from commonutils.datetime.date_func import to_timestamp, coerce_string_to_timest
 
 # TODO: start_date, end_date를 datetime으로 바꿀것인가.
 
-
-# @lru_cache(maxsize=None)
 def get_biz_dates(calendar, start_date=None, end_date=None, with_tz=False):
     biz_days = calendar.all_sessions
     if not with_tz:
@@ -25,10 +24,18 @@ def get_biz_dates(calendar, start_date=None, end_date=None, with_tz=False):
     return biz_days
 
 
-# @lru_cache()
-@preprocess(tz=coerce_string(pytz.timezone))
-@expect_types(tz=optional(tzinfo))
+def _tz(dt, tz):
+    if tz is None:
+        if isinstance(dt, datetime.datetime):
+            tz = dt.tzname()
+        else:
+            tz = dt.tz
+
+    return tz
+
+
 def previous_biz_date(cal, dt, n=1, tz=None):
+    tz = _tz(dt, tz)
     biz_dates = get_biz_dates(cal, with_tz=tz is not None)
 
     if dt in biz_dates:
@@ -37,10 +44,8 @@ def previous_biz_date(cal, dt, n=1, tz=None):
     return find_closest_date_before(dt, biz_dates, tz=tz)
 
 
-# @lru_cache()
-@preprocess(tz=coerce_string(pytz.timezone))
-@expect_types(tz=optional(tzinfo))
 def nth_prev_date(cal, dt, n_period, tz=None):
+    tz = _tz(dt, tz)
     biz_dates = get_biz_dates(cal)
     if not dt in biz_dates:
         dt = find_closest_date_before(dt, biz_dates, tz=tz)
@@ -48,9 +53,8 @@ def nth_prev_date(cal, dt, n_period, tz=None):
     return biz_dates[biz_dates.get_loc(dt) - (n_period - 1)]
 
 
-@preprocess(tz=coerce_string(pytz.timezone))
-@expect_types(tz=optional(tzinfo))
 def find_valid_start_end_dates(calendar, start, end, tz=None):
+    tz = _tz(start, tz)
     with_tz = tz is not None
     biz_dates = get_biz_dates(calendar, with_tz=with_tz)
     start_right_shifted = find_closest_date_after(start, biz_dates, tz=tz)
@@ -65,9 +69,8 @@ def _apply_tz(date: pd.Timestamp, tz):
     return date
 
 
-@preprocess(tz=coerce_string(pytz.timezone))
-@expect_types(tz=optional(tzinfo))
 def find_closest_date_after(start_date, biz_dates, tz=None):
+    tz = _tz(start_date, tz)
     if start_date in biz_dates:
         target_date = to_timestamp(start_date)
     else:
@@ -77,9 +80,8 @@ def find_closest_date_after(start_date, biz_dates, tz=None):
     return _apply_tz(target_date, tz=tz) if tz is not None else target_date
 
 
-@preprocess(tz=coerce_string(pytz.timezone))
-@expect_types(tz=optional(tzinfo))
 def find_closest_date_before(end_date, biz_dates, n=1, tz=None):
+    tz = _tz(end_date, tz)
     if end_date in biz_dates:
         target_date = to_timestamp(end_date)
     else:

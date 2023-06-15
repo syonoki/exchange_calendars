@@ -35,7 +35,6 @@ TradingMinute = Minute
 
 
 def next_divider_idx(dividers: np.ndarray, minute_val: int) -> int:
-
     divider_idx = np.searchsorted(dividers, minute_val, side="right")
     target = dividers[divider_idx]
 
@@ -47,7 +46,6 @@ def next_divider_idx(dividers: np.ndarray, minute_val: int) -> int:
 
 
 def previous_divider_idx(dividers: np.ndarray, minute_val: int) -> int:
-
     divider_idx = np.searchsorted(dividers, minute_val)
 
     if divider_idx == 0:
@@ -57,11 +55,11 @@ def previous_divider_idx(dividers: np.ndarray, minute_val: int) -> int:
 
 
 def compute_minutes(
-    opens_in_ns: np.ndarray,
-    break_starts_in_ns: np.ndarray,
-    break_ends_in_ns: np.ndarray,
-    closes_in_ns: np.ndarray,
-    side: str = "both",
+        opens_in_ns: np.ndarray,
+        break_starts_in_ns: np.ndarray,
+        break_ends_in_ns: np.ndarray,
+        closes_in_ns: np.ndarray,
+        side: str = "both",
 ) -> np.ndarray:
     """Return array of trading minutes."""
     start_ext = 0 if side in ["left", "both"] else NANOSECONDS_PER_MINUTE
@@ -71,7 +69,7 @@ def compute_minutes(
 
     pieces = []
     for open_time, break_start_time, break_end_time, close_time in zip(
-        opens_in_ns, break_starts_in_ns, break_ends_in_ns, closes_in_ns
+            opens_in_ns, break_starts_in_ns, break_ends_in_ns, closes_in_ns
     ):
         if break_start_time != NP_NAT:
             pieces.append(
@@ -115,12 +113,12 @@ def one_minute_later(arr: np.ndarray) -> np.ndarray:
 
 
 def parse_timestamp(
-    timestamp: Date | Minute,
-    param_name: str = "minute",
-    calendar: ExchangeCalendar | None = None,
-    raise_oob: bool = True,
-    side: str | None = None,
-    utc: bool = True,
+        timestamp: Date | Minute,
+        param_name: str = "minute",
+        calendar: ExchangeCalendar | None = None,
+        raise_oob: bool = True,
+        side: str | None = None,
+        utc: bool = True,
 ) -> pd.Timestamp:
     """Parse input intended to represent either a date or a minute.
 
@@ -218,7 +216,7 @@ def parse_timestamp(
 
 
 def parse_trading_minute(
-    calendar: ExchangeCalendar, minute: TradingMinute, param_name: str = "minute"
+        calendar: ExchangeCalendar, minute: TradingMinute, param_name: str = "minute"
 ) -> pd.Timestamp:
     """Parse input intended to represent a trading minute.
 
@@ -245,17 +243,17 @@ def parse_trading_minute(
     # let out-of-bounds be handled by more specific NotTradingMinuteError message.
     minute = parse_timestamp(minute, param_name, raise_oob=False, calendar=calendar)
     if calendar._minute_oob(minute) or not calendar.is_trading_minute(
-        minute, _parse=False
+            minute, _parse=False
     ):
         raise errors.NotTradingMinuteError(calendar, minute, param_name)
     return minute
 
 
 def parse_date(
-    date: Date,
-    param_name: str = "date",
-    calendar: ExchangeCalendar | None = None,
-    raise_oob: bool = True,
+        date: Date,
+        param_name: str = "date",
+        calendar: ExchangeCalendar | None = None,
+        raise_oob: bool = True,
 ) -> pd.Timestamp:
     """Parse input intended to represent a date.
 
@@ -301,9 +299,9 @@ def parse_date(
     # if it falls within the minute that follows midnight.
     ts = parse_timestamp(date, param_name, raise_oob=False, side="left", utc=False)
 
-    if not (ts.tz is None or ts.tz.zone == "UTC"):
+    if not (ts.tz is None or ts.tzname() == 'UTC'):
         raise ValueError(
-            f"Parameter `{param_name}` received with timezone defined as '{ts.tz.zone}'"
+            f"Parameter `{param_name}` received with timezone defined as '{ts.tzname()}'"
             f" although a Date must be timezone naive or have timezone as 'UTC'."
         )
 
@@ -326,7 +324,7 @@ def parse_date(
 
 
 def parse_session(
-    calendar: ExchangeCalendar, session: Session, param_name: str = "session"
+        calendar: ExchangeCalendar, session: Session, param_name: str = "session"
 ) -> pd.Timestamp:
     """Parse input intended to represent a session label.
 
@@ -376,16 +374,16 @@ class _TradingIndex:
     """
 
     def __init__(
-        self,
-        calendar: ExchangeCalendar,
-        start: Date,
-        end: Date,
-        period: pd.Timedelta,
-        closed: str,  # Literal["left", "right", "both", "neither"] when min python 3.8
-        force_close: bool,
-        force_break_close: bool,
-        curtail_overlaps: bool,
-        ignore_breaks: bool,
+            self,
+            calendar: ExchangeCalendar,
+            start: Date,
+            end: Date,
+            period: pd.Timedelta,
+            closed: str,  # Literal["left", "right", "both", "neither"] when min python 3.8
+            force_close: bool,
+            force_break_close: bool,
+            curtail_overlaps: bool,
+            ignore_breaks: bool,
     ):
         self.closed = closed
         self.force_break_close = False if ignore_breaks else force_break_close
@@ -432,7 +430,7 @@ class _TradingIndex:
             return
 
         def _check(
-            start_nanos: np.ndarray, end_nanos: np.ndarray, next_start_nanos: np.ndarray
+                start_nanos: np.ndarray, end_nanos: np.ndarray, next_start_nanos: np.ndarray
         ):
             """Raise IndicesOverlap Error if indices would overlap.
 
@@ -468,10 +466,10 @@ class _TradingIndex:
                 _check(self.break_ends[:-1][mask], closes[mask], next_opens[mask])
 
     def _create_index_for_sessions(
-        self,
-        start_nanos: np.ndarray,
-        end_nanos: np.ndarray,
-        force_close: bool,
+            self,
+            start_nanos: np.ndarray,
+            end_nanos: np.ndarray,
+            force_close: bool,
     ) -> np.ndarray:
         """Create nano array of indices for sessions of given bounds."""
         if start_nanos.size == 0:
@@ -577,7 +575,7 @@ class _TradingIndex:
     def trading_index_intervals(self) -> pd.IntervalIndex:
         """Create trading index as a pd.IntervalIndex."""
         with self._override_defaults(
-            closed="left", force_close=False, force_break_close=False
+                closed="left", force_close=False, force_break_close=False
         ):
             left = self._trading_index()
 
