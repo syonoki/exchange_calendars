@@ -698,7 +698,7 @@ class ExchangeCalendar(ABC):
             """All calendar sessions as nano seconds."""
             return self.sessions.values.astype("int64")
     except:
-        @functools.lru_cache()
+        @property
         def sessions_nanos(self) -> np.ndarray:
             """All calendar sessions as nano seconds."""
             return self.sessions.values.astype("int64")

@@ -350,6 +350,7 @@ KRHarvestMoonDay = [
     # 2023
     Timestamp('2023-09-28', tz='UTC'),
     Timestamp('2023-09-29', tz='UTC'),
+    Timestamp('2023-10-02', tz='UTC'), # 임시공휴일
 ]
 
 # 대체휴일
