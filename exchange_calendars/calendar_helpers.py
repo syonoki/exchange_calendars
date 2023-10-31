@@ -351,7 +351,7 @@ def parse_session(
     ------
     Errors as `parse_date` and additionally:
 
-    exchange_calendars.errors.NotSessionError
+    exchange_calendars.errors.
         If `session` parses to a valid date although date does not
         represent a session of `calendar`.
     """
