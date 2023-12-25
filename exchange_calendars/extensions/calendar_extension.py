@@ -56,8 +56,8 @@ class ExtendedExchangeCalendar(ExchangeCalendar, ABC):
 
         if int(pd.__version__[0]) == 2:
             month_ends = month_ends.reset_index(drop=True)
-            idx_start = month_ends[(month_ends.dt.year==start.year) & (month_ends.dt.month==start.month)].index[0]
-            idx_end = month_ends[(month_ends.dt.year==end.year) & (month_ends.dt.month==end.month)].index[0]
+            idx_start = month_ends[(month_ends.dt.year == start.year) & (month_ends.dt.month == start.month)].index[0]
+            idx_end = month_ends[(month_ends.dt.year == end.year) & (month_ends.dt.month == end.month)].index[0]
             return pd.DatetimeIndex(month_ends[idx_start: idx_end + 1])
         else:
             idx_start = month_ends.index.get_locs([start.year, start.month])[0]
@@ -148,7 +148,9 @@ start_default = pd.Timestamp('1970-01-01', tz='UTC')
 
 class GenericExchangeCalendar(ExtendedExchangeCalendar):
 
-    def __init__(self, name, tz=None, open_times=None, close_times=None, holidays=None, start=start_default, end=None):
+    def __init__(self, name, tz=None, open_times=None, close_times=None,
+                 break_start_times=None, break_end_times=None,
+                 holidays=None, start=start_default, end=None):
         self._name = name
 
         if not tz:
@@ -162,6 +164,9 @@ class GenericExchangeCalendar(ExtendedExchangeCalendar):
 
         self._open_times = open_times
         self._close_times = close_times
+        self._break_start_times = break_start_times
+        self._break_end_times = break_end_times
+
         self._tz = tz
 
         if holidays is None:
@@ -186,6 +191,14 @@ class GenericExchangeCalendar(ExtendedExchangeCalendar):
     @property
     def close_times(self):
         return self._close_times
+
+    @property
+    def break_start_times(self):
+        return self._break_start_times
+
+    @property
+    def break_end_times(self):
+        return self._break_end_times
 
     @property
     def adhoc_holidays(self):
