@@ -213,6 +213,10 @@ KRLunarNewYear = [
     # 2023
     Timestamp('2023-01-23', tz='UTC'),
     Timestamp('2023-01-24', tz='UTC'),
+
+    # 2024
+    Timestamp('2024-02-09', tz='UTC'),
+    Timestamp('2024-02-12', tz='UTC'),
 ]
 
 # Election Days
@@ -233,7 +237,9 @@ KRElectionDays = [
     Timestamp('2018-06-13', tz='UTC'),  # Local election
     Timestamp('2020-04-15', tz='UTC'),  # National Assembly
     Timestamp('2022-03-09', tz='UTC'),  # Presidency
-    Timestamp('2022-06-01', tz='UTC'),  # Local election
+    Timestamp('2022-06-01', tz='UTC'),  # local election
+    Timestamp('2024-04-10', tz='UTC'),  # National Assembly
+
 ]
 
 # Buddha's birthday
@@ -398,6 +404,12 @@ KRTemporaryHoliday2022 = [
 
 KRTemporaryHoliday2023 = [
     Timestamp('2023-05-29', tz='UTC'),  # 부처님 오신날 대체휴일
+]
+
+KRTemporaryHoliday2024 = [
+    Timestamp('2024-02-12', tz='UTC'),  # 설날 대체휴일
+    Timestamp('2024-05-06', tz='UTC'),  # 어린이날 대체휴일
+
 ]
 
 # 잘 모르겠는 휴장일
@@ -642,6 +654,7 @@ class KRXExchangeCalendar(ExtendedExchangeCalendar):
             KRTemporaryHoliday2021,
             KRTemporaryHoliday2022,
             KRTemporaryHoliday2023,
+            KRTemporaryHoliday2024,
             HolidaysBefore1999,
         ))
 
