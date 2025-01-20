@@ -217,6 +217,12 @@ KRLunarNewYear = [
     # 2024
     Timestamp('2024-02-09', tz='UTC'),
     Timestamp('2024-02-12', tz='UTC'),
+
+    # 2025
+    Timestamp('2025-01-27', tz='UTC'),
+    Timestamp('2025-01-28', tz='UTC'),
+    Timestamp('2025-01-29', tz='UTC'),
+    Timestamp('2025-01-30', tz='UTC'),
 ]
 
 # Election Days
@@ -264,6 +270,7 @@ KRBuddhasBirthday = [
     Timestamp('2018-05-22', tz='UTC'),
     Timestamp('2020-04-30', tz='UTC'),
     Timestamp('2021-05-19', tz='UTC'),
+    Timestamp('2024-05-15', tz='UTC'),
 ]
 
 # Harvest Moon Day
@@ -357,6 +364,16 @@ KRHarvestMoonDay = [
     Timestamp('2023-09-28', tz='UTC'),
     Timestamp('2023-09-29', tz='UTC'),
     Timestamp('2023-10-02', tz='UTC'), # 임시공휴일
+
+    # 2024
+    Timestamp('2024-09-16', tz='UTC'),
+    Timestamp('2024-09-17', tz='UTC'),
+    Timestamp('2024-09-18', tz='UTC'),
+
+    # 2025
+    Timestamp('2025-10-06', tz='UTC'),
+    Timestamp('2025-10-07', tz='UTC'),
+    Timestamp('2025-10-08', tz='UTC'),
 ]
 
 # 대체휴일
@@ -409,7 +426,12 @@ KRTemporaryHoliday2023 = [
 KRTemporaryHoliday2024 = [
     Timestamp('2024-02-12', tz='UTC'),  # 설날 대체휴일
     Timestamp('2024-05-06', tz='UTC'),  # 어린이날 대체휴일
+    Timestamp('2024-10-01', tz='UTC'),  # 국군의날 임시공휴일
+]
 
+KRTemporaryHoliday2025 = [
+    Timestamp('2025-03-03', tz='UTC'),  # 삼일절 대체휴일
+    Timestamp('2025-05-06', tz='UTC'),  # 부처님오신날 대체휴일
 ]
 
 # 잘 모르겠는 휴장일
@@ -655,6 +677,7 @@ class KRXExchangeCalendar(ExtendedExchangeCalendar):
             KRTemporaryHoliday2022,
             KRTemporaryHoliday2023,
             KRTemporaryHoliday2024,
+            KRTemporaryHoliday2025,
             HolidaysBefore1999,
         ))
 

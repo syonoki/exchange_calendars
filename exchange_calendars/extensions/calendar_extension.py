@@ -36,7 +36,10 @@ class ExtendedExchangeCalendar(ExchangeCalendar, ABC):
     # <editor-fold desc="Business days">
     def _periods(self, period_field, offset):
         sessions = self.all_sessions
-        period = getattr(sessions, period_field)
+        if period_field == 'week':
+            period = sessions.isocalendar().week
+        else:
+            period = getattr(sessions, period_field)
         if period_field == 'week':
             return pd.Series(sessions, index=sessions).groupby([pd.Grouper(freq='W')]).nth(offset)
         elif period_field == 'quarter':
@@ -51,6 +54,12 @@ class ExtendedExchangeCalendar(ExchangeCalendar, ABC):
             days_offset = -n - 1
         else:
             days_offset = n
+
+        if isinstance(start, str):
+            start = pd.Timestamp(start)
+
+        if isinstance(end, str):
+            end = pd.Timestamp(end)
 
         month_ends = self._periods('month', days_offset)
 
@@ -95,6 +104,7 @@ class ExtendedExchangeCalendar(ExchangeCalendar, ABC):
 
         week_ends = self._periods('week', days_offset)
         tz = week_ends.index.tz
+
         idx_start = week_ends.index.searchsorted(self.to_timestamp(start, tz=tz))
         idx_end = week_ends.index.searchsorted(self.to_timestamp(end, tz=tz))
         return pd.DatetimeIndex(week_ends[idx_start: idx_end + 1])
